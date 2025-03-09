@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* 页面整体布局 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* 主内容区域 */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 按钮样式 */
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #000;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #000;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #ddd;
+        }
+
+        /* 提示语样式 */
+        .welcome-message {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* 课表和按钮区域 */
+        .schedule {
+            width: 100%;
+            border: 2px solid #000;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .button-container {
+        display: flex;
+        justify-content: flex-end; /* 右对齐按钮 */
+        gap: 10px; /* 按钮之间的间距 */
+        margin-bottom: 10px;
+    }
+
+    .action-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        background-color: #000;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .action-button:hover {
+        background-color: #444;
+    }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="welcome-message">
+            欢迎用户 {{ name }}
+        </div>
+        <a href="#" class="button">学生培养方案</a>
+        <a href="{{ url_for('main.tools') }}" class="button">实用工具</a>
+        <a href="{{ url_for('event.input_event') }}" class="button">临时事件输入</a>
+        <a href="#" class="button">意见留言箱</a>
+    </div>
+
+    <div class="content">
+        <div class="schedule" id="schedule">
+            课表
+            <div class="button-container">
+                <button class="action-button" onclick="scrapeSchedule()">爬取课表</button>
+                <button class="action-button" onclick="loadSchedule()">展示课表</button>
+                <button class="action-button" onclick="generatePlan()">生成规划</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function scrapeSchedule() {
+            // 实现爬取课表功能的逻辑
+            alert("爬取课表功能尚未实现");
+        }
+
+        function generatePlan() {
+            // 实现生成规划功能的逻辑
+            alert("生成规划功能尚未实现");
+        }
+
+        function loadSchedule() {
+    fetch('/import_schedule', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const scheduleDiv = document.getElementById('schedule');
+        let tableHTML = '<table><thead><tr><th>时间</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th><th>周日</th></tr></thead><tbody>';
+
+        const days = [1, 2, 3, 4, 5, 6, 7];
+        const dayNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
+        // 时间段分成10分钟
+        for (let time = 0; time < 24 * 6; time++) {
+            const startHour = Math.floor(time / 6);
+            const startMinute = (time % 6) * 10;
+            const endHour = Math.floor((time + 1) / 6);
+            const endMinute = ((time + 1) % 6) * 10;
+            let timeLabel = `${startHour}:${startMinute.toString().padStart(2, '0')} - ${endHour}:${endMinute.toString().padStart(2, '0')}`;
+            let row = `<tr><td>${timeLabel}</td>`;
+
+            for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
+                const day = days[dayIndex];
+                row += '<td>';
+                const dayCourses = data.filter(course => course.dayOfWeek === day);
+                let merged = false; // 标记是否已经合并过的单元格
+                for (let course of dayCourses) {
+                    const beginTime = new Date(`1970-01-01T${course.beginTime}:00Z`);
+                    const endTime = new Date(`1970-01-01T${course.endTime}:00Z`);
+                    const courseStart = (beginTime.getHours() * 60 + beginTime.getMinutes()) / 10;
+                    const courseEnd = (endTime.getHours() * 60 + endTime.getMinutes()) / 10;
+
+                    if (courseStart <= time && courseEnd > time) {
+                        if (!merged) {
+                            row += `<div style="background-color: yellow; padding: 2px; font-size: 12px;">
+                                    ${course.course_name}<br>
+                                    ${course.teacher_name}<br>
+                                    ${course.address}<br>
+                                    ${course.beginTime} - ${course.endTime}<br>
+                                    </div>`;
+                            merged = true;
+                        }
+                    }
+                }
+                row += '</td>';
+            }
+            row += '</tr>';
+            tableHTML += row;
+        }
+
+        tableHTML += '</tbody></table>';
+        scheduleDiv.innerHTML = tableHTML;
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Event</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>确认事件信息</h1>
+    <form method="POST" action="{{ url_for('event.confirm_event') }}">
+        <label for="name">事件名:</label>
+        <input type="text" id="name" name="name" value="{{ result['name'] }}" required><br>
+        <label for="info">事件介绍:</label>
+        <textarea id="info" name="info" required>{{ result['info'] }}</textarea><br>
+        <label for="start_time">开始时间 (YYYY-MM-DD HH:MM):</label>
+        <input type="text" id="start_time" name="start_time" value="{{ result['start_time'] }}" required><br>
+        <label for="end_time">结束时间 (YYYY-MM-DD HH:MM):</label>
+        <input type="text" id="end_time" name="end_time" value="{{ result['end_time'] }}" required><br>
+
+        <button type="submit" name="action" value="confirm">确认</button>
+        <button type="submit" name="action" value="retry">重新运行</button>
+        <button type="submit" name="action" value="manual">手动输入</button>
+
+        <input type="hidden" name="user_text" value="{{ user_text }}">
+    </form>
+</body>
+</html>

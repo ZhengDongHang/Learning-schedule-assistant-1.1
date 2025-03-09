@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>金融计算器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .calculator select, .calculator input, .calculator textarea {
+            margin-bottom: 10px;
+        }
+
+        .calculator button {
+            padding: 10px;
+            border: none;
+            background-color: #000;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .calculator button:hover {
+            background-color: #444;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>金融计算器</h1>
+        <label for="calculator_type">选择计算器类型:</label>
+        <select id="calculator_type">
+            <option value="loan">贷款计算器</option>
+            <option value="investment">投资回报计算器</option>
+            <option value="retirement">退休储蓄计算器</option>
+            <option value="tax">税收计算器</option>
+            <option value="budget">预算计算器</option>
+            <option value="currency">货币兑换计算器</option>
+            <option value="asset">资产管理计算器</option>
+            <option value="debt">债务管理计算器</option>
+        </select>
+
+        <div id="calculator_form"></div>
+
+        <button onclick="submitCalculator()">提交</button>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        const calculatorForm = document.getElementById('calculator_form');
+
+        document.getElementById('calculator_type').addEventListener('change', function() {
+            const type = this.value;
+            let formHtml = '';
+
+            if (type === 'loan') {
+                formHtml = `
+                    <h2>贷款计算器</h2>
+                    <label for="principal">贷款本金:</label>
+                    <input type="number" id="principal" required><br>
+                    <label for="annual_rate">年利率 (%):</label>
+                    <input type="number" id="annual_rate" step="0.01" required><br>
+                    <label for="years">贷款年限:</label>
+                    <input type="number" id="years" required><br>
+                `;
+            } else if (type === 'investment') {
+                formHtml = `
+                    <h2>投资回报计算器</h2>
+                    <label for="initial_investment">初始投资:</label>
+                    <input type="number" id="initial_investment" required><br>
+                    <label for="annual_rate">年利率 (%):</label>
+                    <input type="number" id="annual_rate" step="0.01" required><br>
+                    <label for="years">投资年限:</label>
+                    <input type="number" id="years" required><br>
+                `;
+            } else if (type === 'retirement') {
+                formHtml = `
+                    <h2>退休储蓄计算器</h2>
+                    <label for="monthly_savings">每月储蓄:</label>
+                    <input type="number" id="monthly_savings" required><br>
+                    <label for="annual_rate">年利率 (%):</label>
+                    <input type="number" id="annual_rate" step="0.01" required><br>
+                    <label for="years">储蓄年限:</label>
+                    <input type="number" id="years" required><br>
+                `;
+            } else if (type === 'tax') {
+                formHtml = `
+                    <h2>税收计算器</h2>
+                    <label for="income">收入:</label>
+                    <input type="number" id="income" required><br>
+                    <label for="tax_rate">税率 (%):</label>
+                    <input type="number" id="tax_rate" step="0.01" required><br>
+                `;
+            } else if (type === 'budget') {
+                formHtml = `
+                    <h2>预算计算器</h2>
+                    <label for="income">收入:</label>
+                    <input type="number" id="income" required><br>
+                    <label for="expenses">支出:</label>
+                    <input type="number" id="expenses" required><br>
+                `;
+            } else if (type === 'currency') {
+                formHtml = `
+                    <h2>货币兑换计算器</h2>
+                    <label for="amount">金额:</label>
+                    <input type="number" id="amount" required><br>
+                    <label for="exchange_rate">汇率:</label>
+                    <input type="number" id="exchange_rate" step="0.01" required><br>
+                `;
+            } else if (type === 'asset') {
+                formHtml = `
+                    <h2>资产管理计算器</h2>
+                    <label for="assets">当前资产总值:</label>
+                    <input type="number" id="assets" required><br>
+                    <label for="growth_rate">年增长率 (%):</label>
+                    <input type="number" id="growth_rate" step="0.01" required><br>
+                    <label for="years">年限:</label>
+                    <input type="number" id="years" required><br>
+                `;
+            } else if (type === 'debt') {
+                formHtml = `
+                    <h2>债务管理计算器</h2>
+                    <label for="total_debt">总债务:</label>
+                    <input type="number" id="total_debt" required><br>
+                    <label for="interest_rate">年利率 (%):</label>
+                    <input type="number" id="interest_rate" step="0.01" required><br>
+                    <label for="monthly_payment">每月还款:</label>
+                    <input type="number" id="monthly_payment" required><br>
+                `;
+            }
+
+            calculatorForm.innerHTML = formHtml;
+        });
+
+        function submitCalculator() {
+            const type = document.getElementById('calculator_type').value;
+            const data = { type };
+
+            if (type === 'loan') {
+                data.principal = document.getElementById('principal').value;
+                data.annual_rate = document.getElementById('annual_rate').value;
+                data.years = document.getElementById('years').value;
+            } else if (type === 'investment') {
+                data.initial_investment = document.getElementById('initial_investment').value;
+                data.annual_rate = document.getElementById('annual_rate').value;
+                data.years = document.getElementById('years').value;
+            } else if (type === 'retirement') {
+                data.monthly_savings = document.getElementById('monthly_savings').value;
+                data.annual_rate = document.getElementById('annual_rate').value;
+                data.years = document.getElementById('years').value;
+            } else if (type === 'tax') {
+                data.income = document.getElementById('income').value;
+                data.tax_rate = document.getElementById('tax_rate').value;
+            } else if (type === 'budget') {
+                data.income = document.getElementById('income').value;
+                data.expenses = document.getElementById('expenses').value;
+            } else if (type === 'currency') {
+                data.amount = document.getElementById('amount').value;
+                data.exchange_rate = document.getElementById('exchange_rate').value;
+            } else if (type === 'asset') {
+                data.assets = document.getElementById('assets').value;
+                data.growth_rate = document.getElementById('growth_rate').value;
+                data.years = document.getElementById('years').value;
+            } else if (type === 'debt') {
+                data.total_debt = document.getElementById('total_debt').value;
+                data.interest_rate = document.getElementById('interest_rate').value;
+                data.monthly_payment = document.getElementById('monthly_payment').value;
+            }
+
+            fetch('/tools/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                const resultsDiv = document.getElementById('results');
+                let resultHtml = '<h2>计算结果</h2>';
+
+                if (result.error) {
+                    resultHtml += `<p>${result.error}</p>`;
+                } else {
+                    for (const [key, value] of Object.entries(result)) {
+                        resultHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+                    }
+                }
+
+                resultsDiv.innerHTML = resultHtml;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

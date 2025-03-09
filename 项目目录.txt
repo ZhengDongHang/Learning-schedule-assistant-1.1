@@ -1,0 +1,29 @@
+my_flask_app/
+│
+├── app/
+│   ├── __init__.py           # 初始化 Flask 应用程序
+│   ├── routes/
+│   │   ├── __init__.py       # 初始化 routes 模块
+│   │   ├── auth.py           # 认证相关的路由（登录、注册等）
+│   │   ├── main.py           # 主要功能的路由
+│   │   └── event.py          # 插入事件的路由
+│   ├── models/
+│   │   ├── __init__.py       # 数据库模型的初始化
+│   ├── └── event_model.py 
+│   │   └── user.py           # 用户模型
+│   ├── templates/
+│   │   ├── index.html       # 主页模板
+│   │   ├── login.html        # 登录页面模板
+│   │   ├── register.html     # 注册页面模板
+│   │   └── user_page.html    # 个人用户主页
+|   |   |__input_event.html
+|   |   |__confirm_event.html
+│   └── static/
+│       ├── css/
+│       │   └── styles.css    # 样式表
+│       └── images/
+│           └── background.jpg # 背景图片
+│
+├── config.py                 # 配置文件
+├── run.py                    # 启动 Flask 应用程序
+└── requirements.txt          # 依赖库列表

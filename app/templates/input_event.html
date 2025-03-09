@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Event</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>输入事件</h1>
+    <form method="POST" action="{{ url_for('event.input_event') }}">
+        <!-- 选择事件类型 -->
+        <label for="event_type">选择事件类型:</label>
+        <select id="event_type" name="event_type" required>
+            <option value="">请选择事件类型</option>
+            <option value="custom">自定义事件</option>
+            <option value="placeholder">占位符事件</option>
+        </select>
+
+        <!-- 自定义事件部分 -->
+        <div id="custom_event" style="display: none;">
+            <label for="name">事件名:</label>
+            <input type="text" id="name" name="name"><br>
+
+            <label for="info">事件介绍:</label>
+            <textarea id="info" name="info"></textarea><br>
+
+            <label for="start_time">开始时间 (YYYY-MM-DD HH:MM):</label>
+            <input type="datetime-local" id="start_time" name="start_time"><br>
+
+            <label for="end_time">结束时间 (YYYY-MM-DD HH:MM):</label>
+            <input type="datetime-local" id="end_time" name="end_time"><br>
+        </div>
+
+        <!-- 占位符事件部分 -->
+        <div id="placeholder_event" style="display: none;">
+            <label for="text">输入文本描述事件:</label>
+            <textarea id="text" name="text"></textarea><br>
+        </div>
+
+        <button type="submit">提交</button>
+    </form>
+
+    <script>
+        // 处理事件类型的选择和相应表单部分的显示
+        document.getElementById('event_type').addEventListener('change', function() {
+            var eventType = this.value;
+            var customEvent = document.getElementById('custom_event');
+            var placeholderEvent = document.getElementById('placeholder_event');
+
+            // 根据选择的事件类型显示不同的表单部分
+            if (eventType === 'custom') {
+                customEvent.style.display = 'block';
+                placeholderEvent.style.display = 'none';
+                // 添加/移除 required 属性
+                customEvent.querySelectorAll('input, textarea').forEach(el => el.required = true);
+                placeholderEvent.querySelectorAll('textarea').forEach(el => el.required = false);
+            } else if (eventType === 'placeholder') {
+                customEvent.style.display = 'none';
+                placeholderEvent.style.display = 'block';
+                // 添加/移除 required 属性
+                customEvent.querySelectorAll('input, textarea').forEach(el => el.required = false);
+                placeholderEvent.querySelectorAll('textarea').forEach(el => el.required = true);
+            } else {
+                customEvent.style.display = 'none';
+                placeholderEvent.style.display = 'none';
+                // 移除所有 required 属性
+                customEvent.querySelectorAll('input, textarea').forEach(el => el.required = false);
+                placeholderEvent.querySelectorAll('textarea').forEach(el => el.required = false);
+            }
+        });
+    </script>
+</body>
+</html>
